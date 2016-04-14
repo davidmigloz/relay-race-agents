@@ -1,6 +1,6 @@
 ### JudgeAgent
 - Receives three parameters:
- 1. nAttempts: total number of attempts to run.
+ 1. numAttempts: total number of attempts to run.
  2. initLaps: number of laps in first attemp.
  3. step: number of laps to increase in each attempt
  
@@ -10,20 +10,24 @@
     - startTime: the difference, measured in milliseconds, 
                  between the start time and midnight, January 1, 1970 UTC (Unix time).
     - numLaps: number of laps to run.
+ 3. Default delay: 10seg
  
 > ExperimentBehaviour:
  a) Setup:
    1. Get captains of all teams (RAc).
-   2. Register number of teams.
+   2. Count number of teams.
    3. Get rest of members of the teams (RA).
-   4. Register number of machines (one member per machine).
+   4. Count number of machines (one member per machine).
  b) Init experiment:
    1. Send start time and number of laps to team captains.
    2. Receive confirmations.
  c) Run experiment:
-   1. Start timer at agreed time.
-   2. Receive completion confirmations.
-   3. Stop timer when all confirmations are received.
+   1. Receive completion confirmations.
+   2. Stop timer when all confirmations are received.
+   3. Save results.
+   4. Update variables for next attempt.
+ d) Finish experiment:
+   1. Save results to file
 
 ### RunnerAgent
 - Receives two parameters:
