@@ -1,0 +1,39 @@
+### JudgeAgent
+- Receives three parameters:
+ 1. nAttempts: total number of attempts to run.
+ 2. initLaps: number of laps in first attemp.
+ 3. step: number of laps to increase in each attempt
+ 
+- Notes:
+ 1. Must be named: JudgeAgent
+ 2. Structure of start message: "startTime;numLaps"
+    - startTime: the difference, measured in milliseconds, between the start time and midnight, January 1, 1970 UTC (Unix time).
+    - numLaps: number of laps to run.
+ 
+> ExperimentBehaviour:
+ a) Setup:
+   1. Get captains of all teams.
+   2. Register number of teams.
+   3. Get rest of members of the teams.
+   4. Register number of machines (one member per machine).
+ b) Init experiment:
+   1. Send start time and number of laps to team captains.
+   2. Receive confirmations.
+ c) Run experiment:
+   1. Start timer at agreed time.
+   2. Receive completion confirmations.
+   3. Stop timer when all confirmations are received.
+
+### RunnerAgent
+- Receives two parameters:
+  1. isCaptain: true/false - if the agent is the captain of the team.
+  2. targetAgent: the agent that it has to reach
+  
+> InitBehaviour:
+  1. Receive start time and number of laps from JudgeAgent.
+  2. Schedule start time.
+  3. Start running at agreed time.
+  
+> RunnerBehaviour:
+
+  

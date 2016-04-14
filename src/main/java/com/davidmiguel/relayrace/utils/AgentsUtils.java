@@ -33,15 +33,29 @@ public class AgentsUtils {
 		}
 	}
 
-	public static ServiceDescription getSD(String s) {
+	/**
+	 * Get new service description.
+	 * 
+	 * @param type
+	 *            type slot
+	 * @return ServiceDescription
+	 */
+	public static ServiceDescription getSD(String type) {
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType(s);
+		sd.setType(type);
 		return sd;
 	}
 
-	public static DFAgentDescription getDFD(ServiceDescription sd) {
+	/**
+	 * Get a DFAgentDescription with the service added.
+	 * 
+	 * @param service
+	 *            service slot
+	 * @return DFAgentDescription
+	 */
+	public static DFAgentDescription getDFD(ServiceDescription service) {
 		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.addServices(sd);
+		dfd.addServices(service);
 		return dfd;
 	}
 }
