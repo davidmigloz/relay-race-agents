@@ -7,14 +7,15 @@
 - Notes:
  1. Must be named: JudgeAgent
  2. Structure of start message: "startTime;numLaps"
-    - startTime: the difference, measured in milliseconds, between the start time and midnight, January 1, 1970 UTC (Unix time).
+    - startTime: the difference, measured in milliseconds, 
+                 between the start time and midnight, January 1, 1970 UTC (Unix time).
     - numLaps: number of laps to run.
  
 > ExperimentBehaviour:
  a) Setup:
-   1. Get captains of all teams.
+   1. Get captains of all teams (RAc).
    2. Register number of teams.
-   3. Get rest of members of the teams.
+   3. Get rest of members of the teams (RA).
    4. Register number of machines (one member per machine).
  b) Init experiment:
    1. Send start time and number of laps to team captains.
