@@ -3,7 +3,6 @@ package com.davidmiguel.relayrace.behaviours;
 import com.davidmiguel.relayrace.agents.RunnerAgent;
 import com.davidmiguel.relayrace.utils.AgentsUtils;
 
-import jade.core.AID;
 import jade.core.Location;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -15,16 +14,20 @@ public class RunnerBehaviour extends CyclicBehaviour {
 	private final Logger logger = Logger.getMyLogger(getClass().getName());
 	private static final long serialVersionUID = 7823632300018804712L;
 
+	private int step;
+	private Location destination;
 	private MessageTemplate mtRunner;
 
-	private int step;
-	private AID targetAgent;
-	private Location destination;
-
-	public RunnerBehaviour(RunnerAgent agent, int step) {
+	/**
+	 * RunnerBehaviour constructor.
+	 * 
+	 * @param step
+	 *            initial action to perform (0: wait for message; 1: run to
+	 *            destination)
+	 */
+	public RunnerBehaviour(int step) {
 		super();
 		this.step = step;
-		this.targetAgent = agent.getTargetAgent();
 		this.mtRunner = MessageTemplate.MatchConversationId("running");
 	}
 
@@ -35,7 +38,7 @@ public class RunnerBehaviour extends CyclicBehaviour {
 			// Receive message from previous runner
 			ACLMessage msg = myAgent.receive(mtRunner);
 			if (msg != null) {
-				logger.info("Request to start running received!");
+				logger.info(myAgent.getLocalName() + ":Request to start running received!");
 				// Confirm message
 				ACLMessage confMsg = new ACLMessage(ACLMessage.INFORM);
 				confMsg.setConversationId("running");
@@ -49,7 +52,7 @@ public class RunnerBehaviour extends CyclicBehaviour {
 			break;
 		case 1:
 			// Ask the location of targetAgent
-			ACLMessage request = AgentsUtils.prepareRequestToAMS(myAgent, targetAgent);
+			ACLMessage request = AgentsUtils.prepareRequestToAMS(myAgent, ((RunnerAgent) myAgent).getTargetAgent());
 			myAgent.send(request);
 			step++;
 			break;
@@ -66,7 +69,7 @@ public class RunnerBehaviour extends CyclicBehaviour {
 			break;
 		case 3:
 			// Run to the destination
-			logger.info("Start running to " + destination.getName());
+			logger.info(myAgent.getLocalName() + ":Start running to " + destination.getName());
 			myAgent.doMove(destination);
 			step = 0;
 			break;

@@ -34,11 +34,45 @@
   1. isCaptain: true/false - if the agent is the captain of the team.
   2. targetAgent: the agent that it has to reach
   
+> Setup:
+  1. Get parameters.
+  2. Register agent in yellow pages.
+  3. Save origin location and init laps counter to 0.
+  4. Register content language and movility ontology.
+  5a.If it is captain:
+    i. Add InitBehaviour.
+  5b.If not:
+    i. Add RunnerBehaviour with step=0.
+  
 > InitBehaviour:
   1. Receive start time and number of laps from JudgeAgent.
-  2. Schedule start time.
-  3. Start running at agreed time.
+  2. Confirm reception.
+  3. Schedule start time.
+  4. Start running at agreed time.
   
 > RunnerBehaviour:
+- Receives one parameter:
+  1. step: initial action to perform:
+    a. step=0 - wait for message from previous runner.
+    b. setp=1 - run to location of target agent.
+
+ a) Wait previous runner
+   1. Receive message from previous runner
+   2. Confirm message.
+   3. Start running.
+ b) Running
+   1. Ask the location of targetAgent.
+   2. Get reply from AMS with the location.
+   3. Run to the destination.
+ c) AfterMove (in new location)
+   -> If team captain:
+     i.   Check new location.
+     ii.  If it is the origin -> increase laps counter.
+     iii. If all laps completed: 
+     	 - Send completation message to judge
+     	 - Restart behaviours captain (delete runningBehaviour, add initBehaviour) 
+   1. Send message to local agent to start running
+   2. Receive confirmation
+   
 
   

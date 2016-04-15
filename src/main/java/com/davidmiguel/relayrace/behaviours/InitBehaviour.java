@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import com.davidmiguel.relayrace.agents.RunnerAgent;
 
 import jade.core.AID;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -19,17 +20,16 @@ public class InitBehaviour extends SimpleBehaviour {
 	private final Logger logger = Logger.getMyLogger(getClass().getName());
 	private static final long serialVersionUID = -8974966583277442879L;
 
-	private RunnerAgent agent;
 	private boolean initialized;
 	private MessageTemplate mtJudge;
 	private Pattern pattern;
 	private Date startTime;
 
-	public InitBehaviour(RunnerAgent agent) {
+	public InitBehaviour() {
 		super();
-		this.agent = agent;
 		this.initialized = false;
-		this.mtJudge = MessageTemplate.MatchSender(new AID("JudgeAgent", AID.ISLOCALNAME));
+		this.mtJudge = MessageTemplate.and(MessageTemplate.MatchSender(new AID("JudgeAgent", AID.ISLOCALNAME)),
+				MessageTemplate.MatchConversationId("init"));
 		this.pattern = Pattern.compile("(\\d+);(\\d+)"); // "startTime;numLaps"
 	}
 
@@ -49,13 +49,16 @@ public class InitBehaviour extends SimpleBehaviour {
 				startTime = new Date(Long.parseLong(m.group(1)));
 				// Get number of laps
 				int numLaps = Integer.parseInt(m.group(2));
-				agent.setNumLaps(numLaps);
-				logger.info("Start msg received: (" + startTime.toString() + ";" + numLaps + ")");
+				((RunnerAgent) myAgent).setNumLaps(numLaps);
+				logger.info(myAgent.getLocalName() + ": Start msg received: (" + startTime.toString() + ";" + numLaps
+						+ ")");
 				// Start running at agreed time
 				new Timer().schedule(new TimerTask() {
 					public void run() {
-						logger.info("RUUUUUUUUUUUUUUNNN!!!!!");
-						myAgent.addBehaviour(new RunnerBehaviour((RunnerAgent) myAgent, 1));
+						logger.info(myAgent.getLocalName() + ":RUUUUUUUUUUUUUUNNN!!!!!");
+						Behaviour runnerBehaviour = new RunnerBehaviour(1);
+						((RunnerAgent) myAgent).setRunnerBehaviour(runnerBehaviour);
+						myAgent.addBehaviour(runnerBehaviour);
 					}
 				}, startTime);
 				initialized = true;

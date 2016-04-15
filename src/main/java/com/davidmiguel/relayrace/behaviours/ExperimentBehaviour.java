@@ -22,7 +22,6 @@ public class ExperimentBehaviour extends SimpleBehaviour {
 	private final Logger logger = Logger.getMyLogger(getClass().getName());
 	private static final long serialVersionUID = 6100703780980004688L;
 
-	/** Delay to start the experiment (in seconds) */
 	private static final int DELAY = 10;
 
 	private JSONArray results;
@@ -83,6 +82,7 @@ public class ExperimentBehaviour extends SimpleBehaviour {
 				logger.info("Teams confirmed: " + teamsConfirmed + "/" + numTeams);
 			}
 		}
+		logger.info("Running experiment...");
 		// Receive completion confirmations
 		teamsConfirmed = 0;
 		while (teamsConfirmed != numTeams) {
