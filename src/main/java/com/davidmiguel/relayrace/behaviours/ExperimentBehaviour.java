@@ -17,6 +17,14 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
 
+/**
+ * ExperimentBehaviour is used by JudgeAgent to run the experiment.
+ * 
+ * > Parameters:
+ * 1. numAttempts: total number of attempts to run.
+ * 2. initLaps: number of laps in first attemp.
+ * 3. step: number of laps to increase in each attempt.
+ */
 public class ExperimentBehaviour extends SimpleBehaviour {
 
 	private final Logger logger = Logger.getMyLogger(getClass().getName());

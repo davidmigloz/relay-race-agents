@@ -5,6 +5,15 @@ import com.davidmiguel.relayrace.behaviours.ExperimentBehaviour;
 import jade.core.Agent;
 import jade.util.Logger;
 
+/**
+ * JudgeAgent guides the execution of the experiment, gives the start signal,
+ * time the execution time and saves the results.
+ * 
+ * > Parameters:
+ * 1. numAttempts: total number of attempts to run.
+ * 2. initLaps: number of laps in first attemp.
+ * 3. step: number of laps to increase in each attempt.
+ */
 public class JudgeAgent extends Agent {
 
 	private final Logger logger = Logger.getMyLogger(getClass().getName());

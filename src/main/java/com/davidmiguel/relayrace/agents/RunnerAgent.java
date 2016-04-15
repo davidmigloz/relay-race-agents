@@ -16,7 +16,13 @@ import jade.util.Logger;
 import jade.wrapper.ControllerException;
 
 /**
- * Parameters: - isCaptain: true/false - target agent
+ * RunnerAgent has two status:
+ * 1º LocalAgent: await for the previous runnerAgent to reach its location.
+ * 2º RunnerAgent: run from its location to following localAgent location.
+ * 
+ * > Parameters:
+ * 1. isCaptain: true|false - if the agent is the captain of the team.
+ * 2. targetAgent: agentName - the agent that it has to reach.
  */
 public class RunnerAgent extends Agent {
 
@@ -92,8 +98,7 @@ public class RunnerAgent extends Agent {
 					compMsg.setConversationId("completion");
 					compMsg.addReceiver(new AID("JudgeAgent", AID.ISLOCALNAME));
 					send(compMsg);
-					// Restart behaviours (Remove RunnerBehaviour and add
-					// InitBehaviour)
+					// Restart behaviours (Remove RunnerBehaviour and add InitBehaviour)
 					originLocation = newLocation;
 					removeBehaviour(runnerBehaviour);
 					addBehaviour(new InitBehaviour());

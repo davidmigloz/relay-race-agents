@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import jade.content.lang.Codec.CodecException;
 import jade.content.onto.OntologyException;
-import jade.content.onto.UngroundedException;
 import jade.content.onto.basic.Action;
 import jade.content.onto.basic.Result;
 import jade.core.AID;
@@ -20,6 +19,9 @@ import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.util.Logger;
 
+/**
+ * Util methods used by agents.
+ */
 public class AgentsUtils {
 
 	private final static Logger logger = Logger.getMyLogger(AgentsUtils.class.getName());
@@ -72,6 +74,15 @@ public class AgentsUtils {
 		return dfd;
 	}
 
+	/**
+	 * Prepare request to ask AMS for location of targetAgent.
+	 * 
+	 * @param runner
+	 *            agent that wants to move
+	 * @param targetAgent
+	 *            agent that is in the target location
+	 * @return ACLMessage
+	 */
 	public static ACLMessage prepareRequestToAMS(Agent runner, AID targetAgent) {
 		ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 		request.addReceiver(runner.getAMS());
@@ -79,30 +90,38 @@ public class AgentsUtils {
 		request.setOntology(MobilityOntology.NAME);
 		request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 
-		// creates the content of the ACLMessage
+		// Creates the content of the ACLMessage
 		Action act = new Action();
 		act.setActor(runner.getAMS());
 
 		WhereIsAgentAction action = new WhereIsAgentAction();
 		action.setAgentIdentifier(targetAgent);
-
 		act.setAction(action);
+
 		try {
 			runner.getContentManager().fillContent(request, act);
-		} catch (CodecException ignore) {
-		} catch (OntologyException ignore) {
+		} catch (CodecException | OntologyException e) {
+			logger.log(Logger.SEVERE, "Error at creating message to AMS", e);
 		}
 		return request;
 	}
-	
+
+	/**
+	 * Parse response from AMS to get the location.
+	 * 
+	 * @param runner
+	 *            agent that wants to move
+	 * @param response
+	 *            ACLMessage from AMS
+	 * @return target Location
+	 */
 	@SuppressWarnings("rawtypes")
 	public static Location parseAMSResponse(Agent runner, ACLMessage response) {
 		Result results = null;
 		try {
 			results = (Result) runner.getContentManager().extractContent(response);
-		} catch (UngroundedException e) {
-		} catch (CodecException e) {
-		} catch (OntologyException e) {
+		} catch (CodecException | OntologyException e) {
+			logger.log(Logger.SEVERE, "Error at parsing message from AMS", e);
 		}
 		Iterator it = results.getItems().iterator();
 		Location loc = null;

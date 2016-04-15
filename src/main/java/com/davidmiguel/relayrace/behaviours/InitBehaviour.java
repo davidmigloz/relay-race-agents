@@ -15,6 +15,11 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
 
+/**
+ * InitBehavior is used by the captain of each team before start running. It
+ * receives the start message from JudgeAgent with the time and number of laps
+ * and triggers the runnerBehaviour at scheduled time.
+ */
 public class InitBehaviour extends SimpleBehaviour {
 
 	private final Logger logger = Logger.getMyLogger(getClass().getName());

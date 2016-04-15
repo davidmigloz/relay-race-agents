@@ -9,6 +9,15 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.Logger;
 
+/**
+ * RunnerBehavior is used by all runnerAgents during the execution of the race.
+ * It has two main status:
+ * - step=0: LocalAgent - await for receiving message from previous runner.
+ * - step=[1-3]: RunnerAgebt - move to machine of following localAgent (targetAgent).
+ * 
+ * > Parameters:
+ * 1. step: 0|1 - initial action to perform (0: wait for message; 1: run to destination)
+ */
 public class RunnerBehaviour extends CyclicBehaviour {
 
 	private final Logger logger = Logger.getMyLogger(getClass().getName());
