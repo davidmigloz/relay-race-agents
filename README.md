@@ -2,8 +2,6 @@
 
 Test mobility in the JADE agents platform implementing a "realay race".
 
---------------------
-
 ## JudgeAgent
 
 - Receives three parameters:
@@ -14,15 +12,10 @@ Test mobility in the JADE agents platform implementing a "realay race".
 #### Notes:
  
  1. It must be named: `JudgeAgent`
- 2. Structure of start message: "startTime;numLaps"
-    - startTime: the difference, measured in milliseconds, 
-                 between the start time and midnight, January 1, 1970 UTC (Unix time).
-    - numLaps: number of laps to run.
- 3. Default delay: 10seg
  
- ### ExperimentBehaviour:
+### ExperimentBehaviour:
  
- #### Pseudocode
+#### Pseudocode
  
  - Setup:
    1. Get captains of all teams (RAc).
@@ -92,16 +85,16 @@ Test mobility in the JADE agents platform implementing a "realay race".
    2. Get reply from AMS with the location.
    3. Run to the destination.
  - AfterMove (in new location):
-    + If it is team captain:
-       a. Check new location.
-       b. If it is the origin -> increase laps counter.
-       c. If all laps completed: 
-     	 - Send completation message to judge.
-     	 - Restart behaviours captain (delete runningBehaviour, add initBehaviour) and variables.
-     	 - Exit.
+   + If it is team captain:
+      1. Check new location.
+      2. If it is the origin -> increase laps counter.
+      3. If all laps completed: 
+     	   - Send completation message to judge.
+     	   - Restart behaviours captain (delete runningBehaviour, add initBehaviour) and variables.
+     	   - Exit.
    + All:
-   1. Send message to local agent to start running.
-   2. Receive confirmation.
+      1. Send message to local agent to start running.
+      2. Receive confirmation.
 
 --------------------
 
@@ -145,7 +138,7 @@ b3:com.davidmiguel.relayrace.agents.RunnerAgent(false,b0);
 c2:com.davidmiguel.relayrace.agents.RunnerAgent(false,c3)
 ```
 
-** No line break between `;` *
+**No line break between* `;` 
 
 3º Run agents of machine 2:
 
@@ -172,3 +165,5 @@ c1:com.davidmiguel.relayrace.agents.RunnerAgent(true,c2)
 ```bash
 java jade.Boot -container JudgeAgent:com.davidmiguel.relayrace.agents.JudgeAgent(1,5,0)
 ```
+
+**The `-host` has been omitted*
