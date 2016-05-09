@@ -136,3 +136,5 @@ dependency-reduced-pom.xml
 
 venv/
 vagrant/.vagrant
+*.sqlite
+__pycache__/
