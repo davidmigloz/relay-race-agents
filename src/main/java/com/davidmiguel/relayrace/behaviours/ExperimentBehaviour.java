@@ -123,11 +123,11 @@ public class ExperimentBehaviour extends SimpleBehaviour {
 	public int onEnd() {
 		// Save results to file
 		try {
-			File file = new File("result.json");
+			File file = new File("/home/" + System.getProperty("user.name") + "/result.json");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			FileWriter fileWritter = new FileWriter(file.getName(), true);
+			FileWriter fileWritter = new FileWriter(file, true);
 			fileWritter.write(results.toJSONString());
 			fileWritter.flush();
 			fileWritter.close();

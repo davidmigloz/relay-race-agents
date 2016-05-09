@@ -1,0 +1,14 @@
+source "https://api.berkshelf.com"
+
+cookbook 'java', '~> 1.39.0'
+cookbook 'magic_shell', '~> 1.0.0'
+
+## Load cookbooks from the cookbooks directory.
+#Dir[File.join(File.dirname(__FILE__), 'cookbooks/**')].each do |path|
+#  cookbook File.basename(path), path: path
+#end
+
+## Load cookbooks from the site-cookbooks directory.
+Dir[File.join(File.dirname(__FILE__), 'site-cookbooks/**')].each do |path|
+  cookbook File.basename(path), path: path
+end

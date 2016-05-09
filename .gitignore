@@ -133,3 +133,6 @@ fabric.properties
 APDescription.txt
 MTPs-Main-Container.txt
 dependency-reduced-pom.xml
+
+venv/
+vagrant/.vagrant
