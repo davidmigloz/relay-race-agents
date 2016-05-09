@@ -1,0 +1,120 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+MACS = 3
+NTEAMS = 3
+
+ATTEMPTS = 1
+LAPS = 10
+STEP = 5
+
+Vagrant.configure(2) do |config|
+  (0..(MACS+1)).each do |i|
+
+    if i == 0
+      macName = 'aMaster'
+    elsif i == (MACS + 1)
+      macName = ('a'..'z').to_a[i] + 'Judge'
+    else
+      macName = ('a'..'z').to_a[i] + 'Runner'
+    end
+
+    ## Hostmanager settings.
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = false
+    config.hostmanager.manage_guest = true
+    config.hostmanager.ignore_private_ip = false
+    config.hostmanager.include_offline = false
+
+    config.vm.define macName do |mac|
+
+        ## SSH configuration.
+        mac.ssh.username = macName
+        mac.ssh.private_key_path = '~/.ssh/linode/id_rsa'
+
+        ## Linode provider configuration
+        mac.vm.provider :linode do |provider, override|
+          ## Override base box with linode box.
+          override.vm.box = 'linode'
+          override.vm.box_url =
+            'https://github.com/displague/vagrant-linode/raw/master/box/linode.box'
+
+          ## Disable the NFS sync provider. rsync will be used instead.
+          override.nfs.functional = false
+
+          ## Linode authentication.
+          provider.api_key = ENV['LINODE_API_KEY']
+
+          ## Linode settings
+          provider.distribution = 'Ubuntu 14.04 LTS'
+          provider.datacenterid = [2, 3, 4, 6].sample
+          provider.plan = 'Linode 1024'
+          provider.label = macName
+
+          # Disk Image Sizes (Optional Configuration)
+
+          # Main disk image size
+          # [str] (Full Allocation - Swap) if nil
+          # provider.xvda_size = ''
+
+          # Swap Image Size
+          # [str] 256 if nil
+          provider.swap_size = '4096'
+
+          # Kernel Image ID
+          # [str] disabled if nil
+          provider.kernel = 'Latest 64 bit'
+
+          # Networking (Optional Configuration)
+
+          # Enable private networking
+          # [boolean] disabled if nil
+          # provider.private_networking = true
+        end
+
+        ## Synced folders
+        jar_local = '../jar'
+        jar_remote = '/home/' + macName + '/jar'
+        mac.vm.synced_folder jar_local, jar_remote, disabled: true
+
+        config.vm.synced_folder ".", "/vagrant", disabled: true
+
+        ## Shell Scripts
+        # mac.vm.provision :shell,
+          # inline: 'ln -sf /usr/share/zoneinfo/CET /etc/localtime'
+        # mac.vm.provision :shell,
+          # inline: 'apt-get update -qq && apt-get upgrade -y -qq'
+
+        # The path to the Berksfile to use. The default value is "Berksfile" if one
+        # exists, or nil if it does not.
+        mac.berkshelf.berksfile_path = "../chef/Berksfile"
+
+        # Enable Berkshelf. If a Berksfile exists or a berksfile_path is given, this
+        # value is automatically set to true. If not, the value is false
+        mac.berkshelf.enabled = true
+
+        ## Ubuntu should update the time automatically on boot but do it anyway
+        ## just to be sure.
+        # mac.vm.provision :shell,
+          # inline: 'ntpdate -s ntp.ubuntu.com'
+
+        ## Chef
+        mac.vm.provision :chef_zero do |chef|
+          chef.node_name = 'relaymachine'
+          chef.roles_path = '../chef/roles'
+          chef.nodes_path = '../chef/nodes'
+          chef.data_bags_path = '../chef/data_bags'
+          chef.binary_env = 'SSH_USER=' + macName +
+            ' RELAY_ATTEMPTS=' + ATTEMPTS.to_s +
+            ' RELAY_LAPS=' + LAPS.to_s +
+            ' RELAY_STEP=' + STEP.to_s +
+            ' MACS=' + MACS.to_s +
+            ' MAC_NUM=' + i.to_s +
+            ' NTEAMS=' + NTEAMS.to_s
+        end
+
+        #mac.vm.provision :shell,
+         # inline: 'shutdown -r now'
+    end
+  end
+end

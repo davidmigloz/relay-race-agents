@@ -8,7 +8,11 @@ import jade.content.lang.sl.SLCodec;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.domain.AMSService;
+import jade.domain.FIPAException;
 import jade.domain.FIPANames;
+import jade.domain.FIPAAgentManagement.AMSAgentDescription;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -31,7 +35,7 @@ public class RunnerAgent extends Agent {
 
 	private Behaviour runnerBehaviour;
 	private boolean captain;
-	private AID targetAgent;
+	private String targetAgent;
 	private String originLocation;
 	private int numLaps;
 	private int completedLaps;
@@ -41,10 +45,10 @@ public class RunnerAgent extends Agent {
 		// Get arguments (isCaptain, targetAgent)
 		Object[] args = getArguments();
 		if (args != null && args.length == 2) {
-			captain = ((String) args[0]).equalsIgnoreCase("true");
-			targetAgent = new AID((String) args[1], AID.ISLOCALNAME);
+			captain = ((String) args[0]).equalsIgnoreCase("true");			
+			targetAgent = (String) args[1];
 			if (targetAgent != null) {
-				logger.info("Runner " + getLocalName() + " (C:" + captain + "). Target: " + targetAgent.getName());
+				logger.info("Runner " + getLocalName() + " (C:" + captain + "). Target: " + targetAgent);
 			} else {
 				logger.log(Logger.SEVERE, "Agent " + getLocalName() + " - Incorrect target agent");
 				doDelete();
@@ -112,7 +116,7 @@ public class RunnerAgent extends Agent {
 		// Send message to local agent to start running
 		ACLMessage runMsg = new ACLMessage(ACLMessage.REQUEST);
 		runMsg.setConversationId("running");
-		runMsg.addReceiver(targetAgent);
+		runMsg.addReceiver(getTargetAgent());
 		send(runMsg);
 		logger.info(getLocalName() + ": Relay given");
 		// Wait its anwer
@@ -124,7 +128,21 @@ public class RunnerAgent extends Agent {
 	}
 
 	public AID getTargetAgent() {
-		return this.targetAgent;
+		//Get Agent AID
+		SearchConstraints sC = new SearchConstraints();
+		sC.setMaxResults(new Long(-1));
+		AMSAgentDescription [] agents;
+		try { 
+			agents = AMSService.search(this, new AMSAgentDescription(), sC);	
+			for (int i = 0; i < agents.length; i++) {
+				if (agents[i].getName().getLocalName().equals(targetAgent))
+					return agents[i].getName();
+			}
+		} catch (FIPAException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 	public void setNumLaps(int num) {
