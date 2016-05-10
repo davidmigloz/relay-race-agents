@@ -1,169 +1,57 @@
-#Relay race
+# Relay Race
 
 Test mobility in the JADE agents platform implementing a "realay race".
 
-## JudgeAgent
+## Introduction
 
-- Receives three parameters:
-   1. `numAttempts`: total number of attempts to run.  Ej: `1` *(Atm it just works with 1)*
-   2. `initLaps`: number of laps in first attemp. Ej: `10`
-   3. `step:` number of laps to increase in each attempt. Ej: `5`
- 
-#### Notes:
- 
- 1. It must be named: `JudgeAgent`
- 
-### ExperimentBehaviour:
- 
-#### Pseudocode
- 
- - Setup:
-   1. Get captains of all teams (RAc).
-   2. Count number of teams.
-   3. Get rest of members of the teams (RA).
-   4. Count number of machines (one member per machine).
- - Init experiment:
-   1. Send start time and number of laps to team captains.
-   2. Receive confirmations.
- - Run experiment:
-   1. Receive completion confirmations.
-   2. Stop timer when all confirmations are received.
-   3. Save results.
-   4. Update variables and behaviours for next attempt.
- - Finish experiment:
-   1. Save results to file.
- 
-#### Notes:
- 
-1. Default delay: 10seg. 
-2. Structure of start message: `startTime;numLaps`
-    - `startTime`: the difference, measured in milliseconds, 
-                 between the start time and midnight, January 1, 1970 UTC (Unix time).
-    - `numLaps`: number of laps to run.
+Mobile agents are those agents that can migrate between networked systems in an effort to carry out a given task. This is a report on experiments conducted to test the performance of the agent mobility features of the JADE agent platform. The experiments were in the form of a simulated relay race between teams of mobile agents.
 
-## RunnerAgent
+## Experiment Design
 
-- Receives two parameters:
-  1. `isCaptain`: true/false - if the agent is the captain of the team. Ej: `false`
-  2. `targetAgent`: name of the agent that it has to reach. Ej: `a2`
+### Scenario
 
-#### Pseudocode
- 
-- Setup:
-  1. Get parameters.
-  2. Register agent in yellow pages.
-  3. Save origin location and init laps counter to 0.
-  4. Register content language and movility ontology.
-    - If it is captain: Add `InitBehaviour`.
-    - If not: Add `RunnerBehaviour` with `step=0`.
+![Sample scenario with 3 teams](https://raw.githubusercontent.com/davidmigloz/relay-race-agents/master/docs/report/images/scenario.png)
 
-### InitBehaviour:
+The simulation is made up of teams of agents racing between containers located on different machines. To begin the simulation, a runner agent from each team is placed on each machine. In addition to this, a captain runner agent from each team is placed on each successive machine, so as to alternate the machines on which they begin the race.
 
-#### Pseudocode
- 
-  1. Receive start time and number of laps from `JudgeAgent`.
-  2. Confirm reception.
-  3. Schedule start time.
-  4. Start running at agreed time.
-  
-### RunnerBehaviour:
+To start the race, judge agent sends a specific time to team captains. When it is the time, the captains moves from its container to the container of the next runner agent on its team. Upon arriving at the next container, the runner agent sends a message to its teammate on the container instructing it to move on to the next container. The previous runner agent remains at its new location. When a given number of laps around the network is completed, the team signals to a judge agent that it has completed the race. When all teams have completed the race, the judge agent records the total time taken for all teams to complete the race.
 
-- Receives one parameter:
-  1. `step`: initial action to perform:
-    a. `step=0`: wait for message from previous runner.
-    b. `setp=1`: run to location of target agent.
+The test parameters are varied as follows:
 
+- Increasing the number of machines gradually from 3 to 7.
+- Varying the number of teams from 3 to 21.
+- Varying the number of laps from 1 to 15.
 
-#### Pseudocode
+### Machine Configuration
 
- - Wait previous runner:
-   1. Receive message from previous runner.
-   2. Confirm message.
-   3. Start running.
- - Running:
-   1. Ask the location of `targetAgent`.
-   2. Get reply from AMS with the location.
-   3. Run to the destination.
- - AfterMove (in new location):
-   + If it is team captain:
-      1. Check new location.
-      2. If it is the origin -> increase laps counter.
-      3. If all laps completed: 
-     	   - Send completation message to judge.
-     	   - Restart behaviours captain (delete runningBehaviour, add initBehaviour) and variables.
-     	   - Exit.
-   + All:
-      1. Send message to local agent to start running.
-      2. Receive confirmation.
+The experiment was carried out on multiple Virtual Private Servers across the world from Linode VPS provider. 
 
---------------------
+The machines were deployed with the following configuration:
 
-## Example: 3 teams / 3 machines / 5 laps
+- Compute: 1 CPU core
+- Memory: 1024MB
+- Storage: 24GB SSD
+- Operating System: Ubuntu 14.04 LTS
+- Linux Kernel Latest 64 bit (4.5.0-x861-64-linode65)
+- Oracle Java 1.8
+- JADE 4.4.0
 
-### Environment
+## Results
 
-- Machine 0:
-  + JudgeAgent
-- Machine 1:
-  + A0
-  + A1 (c)
-  + B3
-  + C2
-- Machine 2:
-  + A2
-  + B0
-  + B1 (c)
-  + C3
-- Machine 3:
-  + A3
-  + B2
-  + C0
-  + C1 (c)
+The results obtained from the experiment are shown below.
 
-### Commands:
+### Number of Machines vs Runtime
 
-1º Run plattform:
+The number of machines was incresed gradually from 3 to 7 (without counting judge agent's machine), with a fixed number of 3 teams and 10 laps.
 
-```bash
-java jade.Boot -gui
-```
+### Number of Teams vs Runtime
 
-2º Run agents of machine 1:
+The number of teams was increased gradually from 3 to 21, with a fixed number of 3 machines (without counting judge agent's machine) and 10 laps.
 
-```bash
-java jade.Boot -container 
-a0:com.davidmiguel.relayrace.agents.RunnerAgent(false,a1);
-a1:com.davidmiguel.relayrace.agents.RunnerAgent(true,a2);
-b3:com.davidmiguel.relayrace.agents.RunnerAgent(false,b0);
-c2:com.davidmiguel.relayrace.agents.RunnerAgent(false,c3)
-```
+### Number of Laps vs Runtime
 
-**No line break between* `;` 
+The number of laps was increased gradually from 1 to 15, with a fixed number of 3 teams and 3 machines (without counting judge agent's machine).
 
-3º Run agents of machine 2:
+## Conclusion
 
-```bash
-java jade.Boot -container 
-a2:com.davidmiguel.relayrace.agents.RunnerAgent(false,a3);
-b0:com.davidmiguel.relayrace.agents.RunnerAgent(false,b1);
-b1:com.davidmiguel.relayrace.agents.RunnerAgent(true,b2);
-c3:com.davidmiguel.relayrace.agents.RunnerAgent(false,c0)
-```
-
-4º Run agents of machine 3:
-
-```bash
-java jade.Boot -container 
-a3:com.davidmiguel.relayrace.agents.RunnerAgent(false,a0);
-b2:com.davidmiguel.relayrace.agents.RunnerAgent(false,b3);
-c0:com.davidmiguel.relayrace.agents.RunnerAgent(false,c1);
-c1:com.davidmiguel.relayrace.agents.RunnerAgent(true,c2)
-```
-
-4º Run JudgeAgent in machine 0 (the experiment will start inmediatelly):
-
-```bash
-java jade.Boot -container JudgeAgent:com.davidmiguel.relayrace.agents.JudgeAgent(1,5,0)
-```
-
-**The `-host` has been omitted*
+We can observe that, with small variation probably caused by network, there is a general trend of linearity in all the experiments, even with 21 teams of agents. We could then conclude that the performance of the mobility feature of the JADE agent platform scales in a linear manner. This should, therefore, be taken into consideration when designing systems, with JADE, that will employ agent mobility.
