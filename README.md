@@ -44,13 +44,19 @@ The results obtained from the experiment are shown below.
 
 The number of machines was incresed gradually from 3 to 7 (without counting judge agent's machine), with a fixed number of 3 teams and 10 laps.
 
+![Number of Machines vs Runtime](https://raw.githubusercontent.com/davidmigloz/relay-race-agents/master/docs/report/images/machines.png)
+
 ### Number of Teams vs Runtime
 
 The number of teams was increased gradually from 3 to 21, with a fixed number of 3 machines (without counting judge agent's machine) and 10 laps.
 
+![Number of Teams vs Runtime](https://raw.githubusercontent.com/davidmigloz/relay-race-agents/master/docs/report/images/teams.png)
+
 ### Number of Laps vs Runtime
 
 The number of laps was increased gradually from 1 to 15, with a fixed number of 3 teams and 3 machines (without counting judge agent's machine).
+
+![Number of Laps vs Runtime](https://raw.githubusercontent.com/davidmigloz/relay-race-agents/master/docs/report/images/laps.png)
 
 ## Conclusion
 
