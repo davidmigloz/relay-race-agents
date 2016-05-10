@@ -140,20 +140,31 @@ Mobile agents are those agents that can migrate between networked systems in an 
 
 \subsection{Scenario}
 
-The simulation is made up of teams of agents racing between containers located on different machines. To begin the simulation, an agent from each team is placed on each machine. In addition to this, a \emph{runner} agent from each team is placed on each successive machine so as to alternate the machines on which they begin the race.
+\begin{figure}[H]
+	\begin{widepage}
+		\centering
+		\includegraphics[width=0.5\textwidth]{scenario.png}
+	\end{widepage}
+	\caption{Sample scenario with 3 teams}
+	\label{fig:Sample-scenario}
+\end{figure}
 
-On receiving a signal to start, a runner agent moves from its container to the container of the next agent on its team. Upon arriving at the next container, the runner agent sends a message to its team mate on the container instructing it to move on to the next container. The previous runner agent remains at its new location. When a given number of laps around the network is completed, the team signals to a \emph{judge} agent that it has completed the race. When all teams have completed the race, the judge agent records the total time taken for all teams to complete the race.
+The simulation is made up of teams of agents racing between containers located on different machines. To begin the simulation, a \emph{runner} agent from each team is placed on each machine. In addition to this, a captain \emph{runner} agent from each team is placed on each successive machine, so as to alternate the machines on which they begin the race.
+
+To start the race, \emph{judge} agent sends a specific time to team captains. When it is the time, the captains moves from its container to the container of the next \emph{runner} agent on its team. Upon arriving at the next container, the \emph{runner} agent sends a message to its teammate on the container instructing it to move on to the next container. The previous \emph{runner} agent remains at its new location. When a given number of laps around the network is completed, the team signals to a \emph{judge} agent that it has completed the race. When all teams have completed the race, the \emph{judge} agent records the total time taken for all teams to complete the race.
 
 The test parameters are varied as follows:
 
 \begin{itemize}
-	\item increasing the number of machines gradually from 3 to 7.
-	\item varying the number of teams from 3 to 21.
-	\item varying the number of laps from 1 to 15.
+	\item Increasing the number of machines gradually from 3 to 7.
+	\item Varying the number of teams from 3 to 21.
+	\item Varying the number of laps from 1 to 15.
 \end{itemize}
 
 \subsection{Machine Configuration}
-The experiment was carried out on machines with the following configuration:
+The experiment was carried out on multiple Virtual Private Servers across the world from Linode VPS provider. 
+
+The machines were deployed with the following configuration:
 
 \begin{itemize}
 	\item Compute: 1 CPU core
@@ -171,6 +182,9 @@ The experiment was carried out on machines with the following configuration:
 The results obtained from the experiment are shown below.
 
 \subsection{Number of Machines vs Runtime}
+
+The number of machines was incresed gradually from 3 to 7 (without counting \emph{judge} agent's machine), with a fixed number of 3 teams and 10 laps.
+
 \begin{figure}[H]
 	\begin{widepage}
 		\centering
@@ -181,6 +195,9 @@ The results obtained from the experiment are shown below.
 \end{figure}
 
 \subsection{Number of Teams vs Runtime}
+
+The number of teams was increased gradually from 3 to 21, with a fixed number of 3 machines (without counting \emph{judge} agent's machine) and 10 laps.
+
 \begin{figure}[H]
 	\begin{widepage}
 		\centering
@@ -191,6 +208,9 @@ The results obtained from the experiment are shown below.
 \end{figure}
 
 \subsection{Number of Laps vs Runtime}
+
+The number of laps was increased gradually from 1 to 15, with a fixed number of 3 teams and 3 machines (without counting \emph{judge} agent's machine).
+
 \begin{figure}[H]
 	\begin{widepage}
 		\centering
@@ -202,7 +222,7 @@ The results obtained from the experiment are shown below.
 
 \section{Conclusion}
 
-From the results, it can be concluded that the performance of the mobility feature of the JADE agent platform scales with a general trend of linearity. This should, therefore, be taken into consideration when designing systems, with JADE, that will employ agent mobility.
+We can observe that, with small variation probably caused by network, there is a general trend of linearity in all the experiments, even with 21 teams of agents. We could then conclude that the performance of the mobility feature of the JADE agent platform scales in a linear manner. This should, therefore, be taken into consideration when designing systems, with JADE, that will employ agent mobility.
 
 %\newpage
 %\bibliography{citations}
