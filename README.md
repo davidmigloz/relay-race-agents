@@ -32,7 +32,7 @@ The machines were deployed with the following configuration:
 - Memory: 1024MB
 - Storage: 24GB SSD
 - Operating System: Ubuntu 14.04 LTS
-- Linux Kernel Latest 64 bit (4.5.0-x861-64-linode65)
+- Linux Kernel Latest 64 bit (4.5.0-x86_64-linode65)
 - Oracle Java 1.8
 - JADE 4.4.0
 
